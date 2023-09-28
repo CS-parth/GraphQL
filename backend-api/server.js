@@ -10,6 +10,20 @@ const startServer = async ()=>{
         // Resolvers define how to fetch the types defined in your schema.
     // This resolver retrieves books from the "books" array above.
     const resolvers = {
+        Todo: {
+            user: async (todo)=>{
+                let retData;
+                const AxiosURI = `https://jsonplaceholder.typicode.com/users/${todo.id}`;
+                await axios.get(AxiosURI)
+                .then((res)=>{
+                    retData = res.data;
+                })
+                .catch((err)=>{
+                    console.error(err)
+                })
+                return retData;
+            }
+        },
         Query: {
             getTodos: async () => {
                 const AxiosURI = 'https://jsonplaceholder.typicode.com/todos';
@@ -27,10 +41,19 @@ const startServer = async ()=>{
     };
     const typeDefs = `
         #This is a comment in graphQL
+        type User{
+            id: ID!
+            name: String!
+            username: String!
+            email: String!
+            phone: String!
+            website: String!
+        }
         type Todo{
             id : ID!
             title : String!
             completed : Boolean!
+            user: User
         }
 
         # The "Query" type is special: it lists all of the available queries that
